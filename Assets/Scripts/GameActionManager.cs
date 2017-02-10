@@ -2,6 +2,10 @@
 using System.Collections;
 
 public class GameActionManager : MonoBehaviour {
+    [HideInInspector]
+    public int money = 0;
+    [HideInInspector]
+    public Sprite UpgradeSprite;
 
     PrefabManager prefabManager;
     MouseWeapon mouseWeapon;
@@ -11,24 +15,20 @@ public class GameActionManager : MonoBehaviour {
         prefabManager = FindObjectOfType<PrefabManager>();
         mouseWeapon = FindObjectOfType<MouseWeapon>();
 
+        UpgradeSprite = prefabManager.GetWeaponSprite(PrefabManager.E_WEAPON.GLOVE);
     }
 	
 	// Update is called once per frame
 	void Update () {
 
-        FingerSlap();
+       if (mouseWeapon.DidMouseChangeSide())
+           FingerSlap();       
 
     }
 
     void FingerSlap() {
-        if (!mouseWeapon.DidMouseChangeSide())
-            return;
-
-        float centerX = Camera.main.transform.position.x;
-        float mouseX = mouseWeapon.transform.position.x;
         if (mouseWeapon.GetMouseHitPower() != 0)
             SpawnCurrency(mouseWeapon.GetPower(), mouseWeapon.GetMouseHitPower());
-
     }
     void SpawnCurrency(int _mousePower, int _getHitPower) {
         for (int i = 0; i < (int)PrefabManager.E_CURRENCY.SIZE - 1; ++i) {
@@ -36,11 +36,19 @@ public class GameActionManager : MonoBehaviour {
                 return;
             else {
                 int numOfSpawnings = Random.Range(1, Mathf.Abs(_getHitPower));
-                for(int j = 0; j < numOfSpawnings; ++j)
-                    Instantiate(prefabManager.GetCurrencyPrefab((PrefabManager.E_CURRENCY)i), mouseWeapon.transform.position, Quaternion.identity);
+                for(int j = 0; j < numOfSpawnings; ++j) {
+                    GameObject currencyPrefab = prefabManager.GetCurrencyPrefab((PrefabManager.E_CURRENCY)i);
+                    Instantiate(currencyPrefab, Camera.main.transform.position/2, Quaternion.identity);
+                    AddMoney(currencyPrefab.GetComponent<Currency>().value);
+                }
             }
         }                
     }
+
+    public void AddMoney(int _amount) {
+        money += _amount;        
+    }
+    
 
 
 

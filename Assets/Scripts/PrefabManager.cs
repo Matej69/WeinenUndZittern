@@ -5,10 +5,10 @@ public class PrefabManager : MonoBehaviour {
 
     [HideInInspector]
     public enum E_CURRENCY {
-        COIN_GOLD,
+        COIN_RED,
         COIN_GREEN,
         COIN_ORANGE,
-        COIN_RED,
+        COIN_GOLD,
         MONEY,
         INGOT,
         DIAMOND_GREEN,
@@ -17,10 +17,24 @@ public class PrefabManager : MonoBehaviour {
         SIZE
     }
     public GameObject[] currency;
-    
 
-	// Use this for initialization
-	void Start () {
+    [HideInInspector]
+    public enum E_WEAPON {
+        FINGER,
+        GLOVE,
+        BONE,
+        BAT,
+        HAMMER,
+        KNIFE,
+        AXE,
+        CHAINSAW,
+        SIZE
+    }
+    public Sprite[] weapons;
+
+
+    // Use this for initialization
+    void Start () {
 	
 	}
 	
@@ -34,6 +48,14 @@ public class PrefabManager : MonoBehaviour {
             if (curr.GetComponent<CurrencyEnumType>().type == _type)
                 return curr;
         Debug.Log("ERROR : Cant get any currency objects");
+        return null;
+    }
+
+    public Sprite GetWeaponSprite(E_WEAPON _weapon) {
+        for (int i = 0; i < weapons.Length; ++i)
+            if (i == (int)_weapon)
+                return weapons[i];
+        Debug.Log("ERROR : Cant get any weapon objects");
         return null;
     }
 
