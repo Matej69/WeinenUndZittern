@@ -16,7 +16,9 @@ public class MouseWeapon : MonoBehaviour {
     private int power = 1;
 
     private Vector2 lastFrameMousePos;
+    [HideInInspector]
     public bool isOnGUI = false;
+    public bool canHurtPuppet = true;    
 
     public Sprite GUICursorSprite;
     [HideInInspector]
@@ -25,6 +27,8 @@ public class MouseWeapon : MonoBehaviour {
 
     [HideInInspector]
     public PrefabManager.E_WEAPON cursorID;
+
+    public Transform PuppetHitPoint;
 
     PrefabManager manager;
 
@@ -40,6 +44,9 @@ public class MouseWeapon : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        if (cursorID == PrefabManager.E_WEAPON.CHAINSAW)
+            canHurtPuppet = false;
+
         if (!isOnGUI)
             SetLastFrameMouseSide();
 
@@ -60,12 +67,12 @@ public class MouseWeapon : MonoBehaviour {
     }
     
     public void SetLastFrameMouseSide() {
-        float centerX = Camera.main.transform.position.x;
+        float centerX = PuppetHitPoint.position.x;  //Camera.main.transform.position.x;
         float mouseX = transform.position.x;
         lastFrameSide = (mouseX > centerX) ? E_DIR.RIGHT : E_DIR.LEFT;
     }
     public void SetCurrentMouseSide() {
-        float centerX = Camera.main.transform.position.x;
+        float centerX = PuppetHitPoint.position.x;
         float mouseX = transform.position.x;
         currSide = (mouseX > centerX) ? E_DIR.RIGHT : E_DIR.LEFT;
     }
@@ -83,12 +90,10 @@ public class MouseWeapon : MonoBehaviour {
         Vector2 mouseDelta = GetDeltaMouse();
         int x = (int)mouseDelta.x;
         int sign = (int)GetMovementDir();
-        if      ((x > 0  && x < 15)      || (x < 0    && x > -15))  return 1 * sign;
-        else if ((x >= 15 && x < 40)    || (x < -15  && x > -40))   return 2 * sign;
-        else if ((x >= 40  && x < 90)   || (x < -40  && x > -90))   return 3 * sign;
-        else if ((x >= 90  && x < 160)  || (x < -90  && x > -160))  return 4 * sign;
-        else if ((x >= 160 && x < 300)  || (x < -160 && x > -300))  return 5 * sign;
-        else                                                        return 0 * sign;
+        if      ((x > 0     && x < 40)      || (x < 0    && x > -40))   return 1 * sign;
+        else if ((x >= 40   && x < 90)      || (x < -40  && x > -90))   return 2 * sign;
+        else if ((x >= 90   && x < 2500)    || (x < -90  && x > -2500)) return 3 * sign;
+        else                                                            return 0 * sign;
     }    
 
     public E_DIR GetMovementDir() {

@@ -16,12 +16,14 @@ public class Shop : MonoBehaviour {
     MouseWeapon mouseWeapon;
     PrefabManager prefabManager;
     GameActionManager gameActionManager;
+    Puppet puppet;
 
     // Use this for initialization
     void Start () {
         mouseWeapon = FindObjectOfType<MouseWeapon>();
         prefabManager = FindObjectOfType<PrefabManager>();
         gameActionManager = FindObjectOfType<GameActionManager>();
+        puppet = FindObjectOfType<Puppet>();
 
         SetListeners();
     }
@@ -42,12 +44,16 @@ public class Shop : MonoBehaviour {
             gameActionManager.money -= GetWeaponPrice(mouseWeapon.cursorID + 1);
             mouseWeapon.SetSprite(++mouseWeapon.cursorID);
             mouseWeapon.SetPower(mouseWeapon.GetPower() + 1);
-                 
+            //automatically close shop after buying
+            gameObject.active = false;
+            mouseWeapon.SetCursorMode(false);
+            puppet.PuppetVisibility(true);
         });
 
         Exit.onClick.AddListener(delegate {
             gameObject.active = false;
             mouseWeapon.SetCursorMode(false);
+            puppet.PuppetVisibility(true);
         });
 
     }
@@ -61,13 +67,13 @@ public class Shop : MonoBehaviour {
 
     public int GetWeaponPrice(PrefabManager.E_WEAPON _weapon) {
         switch (_weapon) {
-            case PrefabManager.E_WEAPON.GLOVE   :   return 70;      break;
-            case PrefabManager.E_WEAPON.BONE    :   return 500;     break;
-            case PrefabManager.E_WEAPON.BAT     :   return 2200;    break;
-            case PrefabManager.E_WEAPON.HAMMER  :   return 9000;    break;
-            case PrefabManager.E_WEAPON.KNIFE   :   return 50000;   break;
-            case PrefabManager.E_WEAPON.AXE     :   return 200000;   break;
-            case PrefabManager.E_WEAPON.CHAINSAW:   return 2000000; break;
+            case PrefabManager.E_WEAPON.GLOVE   :   return 150;     break;
+            case PrefabManager.E_WEAPON.BONE    :   return 1000;    break;
+            case PrefabManager.E_WEAPON.BAT     :   return 4200;    break;
+            case PrefabManager.E_WEAPON.HAMMER  :   return 12000;   break;
+            case PrefabManager.E_WEAPON.KNIFE   :   return 40000;   break;
+            case PrefabManager.E_WEAPON.AXE     :   return 150000;  break;
+            case PrefabManager.E_WEAPON.CHAINSAW:   return 1000000; break;
             default                             :   return 0;
         }
     }
@@ -80,7 +86,7 @@ public class Shop : MonoBehaviour {
     }
 
     public bool HasEnoughMoney() {
-        return gameActionManager.money > GetWeaponPrice(mouseWeapon.cursorID + 1);
+        return gameActionManager.money >= GetWeaponPrice(mouseWeapon.cursorID + 1);
     }
 
 
